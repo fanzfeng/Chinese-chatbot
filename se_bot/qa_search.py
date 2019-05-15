@@ -5,9 +5,9 @@
 
 import time
 import jieba
-import logging
 from collections import Counter
 import pandas as pd
+from bot_config import logging
 
 
 class SearchEngine(object):

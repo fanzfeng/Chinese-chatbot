@@ -12,7 +12,8 @@ try:
     sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 except:
     pass
-from s2s_bot.model import Seq2Seq, logging
+from bot_config import logging
+from s2s_bot.model import Seq2Seq
 from s2s_bot.config import *
 from utils_fanzfeng.tf_utils import load_vocab, seq2seq_get_batch
 

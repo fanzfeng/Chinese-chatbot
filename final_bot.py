@@ -7,51 +7,31 @@ import re
 import time
 import jieba
 import random
-import logging
 import requests
 import json
-#from s2s_bot.min_bot import ChatBot
+
+from bot_config import *
+
+# from s2s_bot.min_bot import ChatBot
 from frame_bot.frame_chatbot import FRAME
 from se_bot.qa_search import SearchEngine
-
-# logging.basicConfig(level=logging.INFO)
 
 t0 = time.time()
 logging.info("Load our bots...")
 cn_text_cut = jieba.cut
-file_stop_words = "/home/fanzfeng/nlp_config/stop_words.txt"
-with open(file_stop_words, "r", encoding="utf-8") as fp:
-    stops_list = [k.strip() for k in fp.readlines()][0:37] + ["'"]
-query2rid_file = "/home/fanzfeng/nlp_config/3w_bot.csv"
+
 personality = SearchEngine(query2rid_file=query2rid_file,
                            rid2res_file=None,
                            file_stop_dict=file_stop_words,
                            words_cut_func=cn_text_cut)
 personality.build_index()
-
 weather_query = FRAME()
-
-#chat_query = ChatBot(data_path="/home/fanzfeng/backup/processed",
-#                     model_path="/home/fanzfeng/backup/s2s_lr0.5_ft256",
-#                     words_cut_func=cn_text_cut)
+# chat_query = ChatBot(data_path="/home/fanzfeng/backup/processed",
+#                      model_path="/home/fanzfeng/backup/s2s_lr0.5_ft256",
+#                      words_cut_func=cn_text_cut)
 
 t1 = time.time()
-logging.info("Bots is ready (use time {0:.2f}min), here we go".format(t1/60-t0/60))
-default_response = ["你说的我没懂哦，正在拼命学习中",
-                    "这个我就不懂了，你可以问下邻居小明",
-                    "你站在此地不要动，我去买个句子",
-                    "你这话我没法接[允悲]",
-                    "嗯，然后呢",
-                    "请继续你的表演"]
-noinput_response = ["你不说话，我不说话，看谁先憋不住吧",
-                    "此处静无声, 风儿停云儿憩",
-                    "说吧，是不是手抖了[滑稽]",
-                    "最怕空气突然安静"]
-switch_response = ["你可以试着问我天气, 跟我闲聊瞎扯", "小胖正在学习中，目前只能查询天气、陪人闲聊吹水"]
-weather_keywords = ["天气", "气温", "下雪", "下雨", "雾霾", "有雨", "雨天", "阴天", "晴天",
-                    "今天", "今日", "明天", "后日", "后天"]
-
-switch_rules = [".*?换.*?话题", ".*?话题.*?换"]
+logging.info("Bots is ready (use time {0:.2f}min), here we go.".format(t1/60-t0/60))
 
 
 def clean_input_bound(text, s_ix=0):
@@ -129,16 +109,16 @@ def one_bot(input_str, uid="_global"):
         # if len(res_text_clean) <= 1:
         #    return random.choice(default_response)
         # text_unq = text_unique(res_text_clean)
-        #if len(text_unq) <= 1:
+        # if len(text_unq) <= 1:
         #    return random.choice(default_response)
-        #else:
+        # else:
         #    return None
 
+
 if __name__ == "__main__":
-    print(one_bot("好无聊啊"))
-    #while True:
-    #    user_input = input("> ").strip().replace(" ", "")
-    #    if user_input in ("bye", "quit"):
-    #        print("再见")
-    #        break
-    #    print(one_bot(user_input))
+    while True:
+        user_input = input("> ").strip().replace(" ", "")
+        if user_input in ("bye", "quit"):
+            print("再见")
+            break
+        print(one_bot(user_input))

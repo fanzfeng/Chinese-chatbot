@@ -3,10 +3,10 @@
 # @Author  : fanzfeng
 
 import time
-import logging
 import pyltp
 import platform
 import sys, codecs
+from bot_config import logging
 
 sys.path.insert(0, "../")
 try:

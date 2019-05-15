@@ -1,30 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import os
+import sys, codecs
 import web
-import logging
 import hashlib
+
+import weixin.receive as receive
+import weixin.reply as reply
+
+from final_bot import one_bot, random, re
+from bot_config import *
 # import concurrent
 
-import sys, codecs
-sys.path.insert(0, "../")
 try:
     sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 except:
     pass
 
-in_path = os.path.dirname(os.path.abspath(__file__))
-FORMAT = '%(asctime)-15s %(levelname)s - %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT)
-# logging.basicConfig(filename=in_path+'/app.log', level=logging.INFO, format=FORMAT)
 # executor = concurrent.futures.ThreadPoolExecutor(3)
-
-import receive
-import reply
-
-
-from final_bot import one_bot, random, re
-emotions = ["[奸笑]", "[捂脸]", "[发抖]", "[嘿哈]", "[机智]"]
 
 
 class Handle(object):
@@ -43,7 +35,7 @@ class Handle(object):
             sha1 = hashlib.sha1()
             map(sha1.update, list)
             hashcode = sha1.hexdigest()
-            #print("handle/GET func: hashcode, signature: ", hashcode, signature)
+            # print("handle/GET func: hashcode, signature: ", hashcode, signature)
             if hashcode == signature:
                 return echostr
             else:
