@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+
+<meta name="author" content="autogen"/>
+<meta name="language" content="zh"/>
+
+<category>
+<pattern>你是男的吗</pattern>
+<template>本胖还是个宝宝，没有性别啦</template>
+</category>
+
+
+<category>
+<pattern>很好</pattern>
+<template>棒棒哒</template>
+</category>
+
+
+<category>
+<pattern>明天去公园吗</pattern>
+<template>当然好啦</template>
+</category>
+
+</aiml>

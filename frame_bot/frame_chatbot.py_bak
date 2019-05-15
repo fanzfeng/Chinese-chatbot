@@ -1,0 +1,116 @@
+# -*- coding: utf-8 -*-
+# @Date  : 08/08/2018
+# @Author  : fanzfeng
+
+import time
+import sys, codecs
+sys.path.insert(0, "../")
+try:
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+except:
+    pass
+from utils_fanzfeng.weather import WeatherQA
+from utils_fanzfeng.mongo_service import MongoSevice
+import pyltp
+import platform
+
+if platform.system() == 'Darwin':
+    config_dir = '/users/fanzfeng/Data/'
+elif platform.system() == 'Linux':
+    config_dir = '/home/fanzfeng/nlp_config/'
+segmentor = pyltp.Segmentor()
+segmentor.load(config_dir + "ltp_data_v3.4.0/cws.model")
+postagger = pyltp.Postagger()
+postagger.load(config_dir + "ltp_data_v3.4.0/pos.model")
+recognizer = pyltp.NamedEntityRecognizer()
+recognizer.load(config_dir + "ltp_data_v3.4.0/ner.model")
+
+weather = WeatherQA()
+
+
+def ner(text):
+    words = list(segmentor.segment(text))
+    postags = list(postagger.postag(words))
+    netags = list(recognizer.recognize(words, postags))
+    jr = {}
+    for h in ["B", "I", "E", "S"]:
+        for s in ["Nh", "Ns", "Ni"]:
+            if h + "-" + s in netags:
+                jr[s] = words[netags.index(h + "-" + s)]
+    return jr
+
+
+def action_query(query_info):
+    if len(query_info["loc_text"]) > 0 and query_info["date_ix"] is not None:
+        return weather.weather_query(query_info["loc_text"], query_info["date_ix"])
+    elif query_info["date_ix"] is not None:
+        return "您要查询哪个城市的天气呢？"
+    elif len(query_info["loc_text"]) > 0:
+        return "您要查询{}什时候的时间呢，今天？明天？后天？".format(query_info["loc_text"])
+    else:
+        return "您要查询哪个城市什么时候的天气呢？"
+
+
+class FRAME(object):
+    def __init__(self, sessionStore=None):
+        self.mong = MongoSevice(my_db="chatbot", my_set="weather", id_col="uid")
+        # mong.create_collection()
+
+        # if sessionStore is not None:
+        #     self._sessions = sessionStore
+        # else:
+        #     self._sessions = {}
+        self.res_default = {"loc_text": "", "date_ix": None}
+        # self._addSession(self._globalSessionID)
+
+    def add_session(self, sessionID):
+        # if sessionID not in self._sessions:
+        #     self._sessions[sessionID] = {
+        #         "loc_text": "",
+        #         "date_ix": None}
+        res_mong = self.mong.find_request(sessionID)
+        if isinstance(res_mong, dict):
+            time_diff = int(time.time() - res_mong["update_time"])
+            # print(time_diff, "s  ", time_diff/60, "min")
+            if time_diff < 60*10:
+                self.mong.update_request(sessionID, set={"update_time": time.time()})
+                return {k: res_mong[k] for k in self.res_default}
+            else:
+                self.mong.update_request(sessionID, set={"update_time": time.time(),
+                                                         "loc_text": "", "date_ix": None})
+                return self.res_default
+
+        else:
+            self.mong.insert_request(doc={"update_time": time.time(), "loc_text": "", "date_ix": None,
+                                     "uid": sessionID})
+            return self.res_default
+
+    def respond(self, input_, sessionID="_global"):
+        try:
+            request_info = self.add_session(sessionID)
+        except Exception as e:
+            print(e)
+            request_info = {"loc_text": "深圳", "date_ix": None}
+        # print("start: ", request_info)
+        if len(input_) > 0:
+            ad_dict = ner(input_)
+            if 'Ns' in ad_dict or 'Ni' in ad_dict:
+                request_info["loc_text"] = (ad_dict['Ns'] if 'Ns' in ad_dict else ad_dict['Ni'])
+                self.mong.update_request(sessionID, set={"loc_text": request_info["loc_text"],
+                                                         "update_time": time.time()})
+            date_info = weather.date_index(input_)
+            if date_info is not None:
+                request_info["date_ix"] = date_info
+                self.mong.update_request(sessionID, set={"date_ix": date_info, "update_time": time.time()})
+        # print("end: ", request_info)
+        return action_query(request_info)
+
+
+if __name__ == "__main__":
+    query = FRAME()
+    while True:
+        user_input = input("> ").strip().replace(" ", "")
+        if user_input in ("bye", "quit"):
+            print("再见")
+            break
+        print(query.respond(user_input))
