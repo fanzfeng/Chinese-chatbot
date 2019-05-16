@@ -80,7 +80,7 @@ def text_unique(output_text):
     return new_list
 
 
-def one_bot(input_str, uid="_global"):
+def one_bot(input_str, uid="_global", min_score=0.3):
     input_text = clean_input(input_str.strip().replace(" ", ""))
     if len(input_text) <= 0:
         return random.choice(noinput_response)
@@ -92,7 +92,7 @@ def one_bot(input_str, uid="_global"):
         return weather_query.respond(input_text, uid)
     else:
         per_res = personality.query_search(input_text, res_num=1)
-        if len(per_res) >= 1 and per_res[0]["score"] > 0.2:
+        if len(per_res) >= 1 and per_res[0]["score"] > min_score:
             return per_res[0]["answer"]
         try:
             res_text = api_chat(input_text)

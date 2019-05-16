@@ -36,5 +36,5 @@ query2rid_file = os.path.join(nlp_path, "3w_bot.csv")
 
 log_file = "./chat.log"
 formatter = '[%(levelname)s] [%(asctime)s] [%(filename)s:%(lineno)d] [%(message)s]'
-logging.basicConfig(filename=log_file, level=logging.INFO, format=formatter)
+logging.basicConfig(filename=log_file, level=logging.DEBUG, format=formatter)
 # FORMAT = '%(asctime)-15s %(levelname)s - %(message)s'

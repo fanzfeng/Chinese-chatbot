@@ -5719,3 +5719,18 @@ b'<xml><ToUserName><![CDATA[gh_c447661c6277]]></ToUserName>\n<FromUserName><![CD
 2019-05-15 13:01:37,756 DEBUG - Response result: [{'query_ix': 41, 'query_text': '谢谢你', 'score': 0.5, 'answer': '不客气'}]
 2019-05-15 13:01:37,756 INFO - Bot gh_c447661c6277 say: 
 不客气
+Building prefix dict from the default dictionary ...
+Loading model from cache /tmp/jieba.cache
+Loading model cost 0.932 seconds.
+Prefix dict has been built succesfully.
+http://0.0.0.0:80/
+Building prefix dict from the default dictionary ...
+Loading model from cache /tmp/jieba.cache
+Loading model cost 0.826 seconds.
+Prefix dict has been built succesfully.
+http://0.0.0.0:80/
+Building prefix dict from the default dictionary ...
+Loading model from cache /tmp/jieba.cache
+Loading model cost 0.958 seconds.
+Prefix dict has been built succesfully.
+http://0.0.0.0:80/
