@@ -59,7 +59,7 @@ def api_chat(user_text="附近的酒店"):
         }
     }
     res = requests.post(url, data=json.dumps(js))
-    return res.json()['results'][0]['values']['text']
+    return res.json()['results'][0]['values']['text'].replace("图灵", "")
 
 
 def clean_input(text):
@@ -80,7 +80,7 @@ def text_unique(output_text):
     return new_list
 
 
-def one_bot(input_str, uid="_global", min_score=0.3):
+def one_bot(input_str, uid="_global", min_score=0.6):
     input_text = clean_input(input_str.strip().replace(" ", ""))
     if len(input_text) <= 0:
         return random.choice(noinput_response)
