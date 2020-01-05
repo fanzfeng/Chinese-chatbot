@@ -1,18 +1,24 @@
-#!/usr/bin/env python
-# version=3.6.4
 # -*- coding: utf-8 -*-
 # @Date  : 07/08/2018
 # @Author  : fanzfeng
 
 import requests
+from utils.nlp_utils import ZhNlp
+
+nlp = ZhNlp(config_lib="jieba")
+
 
 class WeatherQA(object):
     def __init__(self):
         self.user_key = "5467ebc56c2c008233d0d81d0c92a17a"
+
         self.area_find_url = "https://restapi.amap.com/v3/config/district?keywords={area_words}&subdistrict=0&key={key}"
+
         self.weather_url = "https://restapi.amap.com/v3/weather/weatherInfo?key={key}&output=json" \
               "&extensions=all&city={area_code}"
+
         self.date_config = [["今天", "今日"], ["明天", "后日"], ["后天"]]
+        self.w_p = ["ns"]
 
     def weather_api(self, ad_word):
         url_ = self.area_find_url.format(area_words=ad_word, key=self.user_key)
@@ -27,6 +33,18 @@ class WeatherQA(object):
             for s in self.date_config[i]:
                 if s in d:
                     return i
+        return None
+
+    def loc_index(self, s):
+        loc = None
+        if isinstance(s, str) and len(s) > 1:
+            res = nlp.zh_ner(s)
+            if res:
+                n = len(res[-1])
+                for i in range(n):
+                    if res[-1][i] in self.w_p:
+                        loc = res[0][i]
+        return loc
 
     def weather_query(self, loc_text, date_ix):
         if date_ix is not None:

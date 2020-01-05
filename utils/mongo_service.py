@@ -7,7 +7,7 @@ import logging
 
 
 class MongoSevice(object):
-    def __init__(self, server_id="39.108.171.231", my_db="weibo_kol", my_set="kol_find_job", id_col='application_id'):
+    def __init__(self, server_id, my_db, my_set, id_col):
         self.ip = server_id
         self.client = MongoClient(host=self.ip, port=27017)
         self.set_name = my_set
@@ -111,34 +111,4 @@ class MongoSevice(object):
     #     spark_running_job = self.find_requests_by_status('SPARK_RUNNING')
     #     return status_stat, waiting_job, waiting_cache_job, spark_running_job
 
-if __name__ == "__main__":
-    import pprint
-    # mong = MongoSevice(my_set="kol_bank", id_col="kol_id")
-    # mong = MongoSevice()
-    # print(mong.find_requests_by_status("running"))
-    # mong.clear_requests_by_status("running")
-    # mong.update_request('81d4dfcf43953bf01db2d7eaf3047e8b', set={"status": "--"})
-    # mong.find_request('81d4dfcf43953bf01db2d7eaf3047e8b')
-    # mong.insert_request({"application_id": "up", "status": "-"})
-    # pprint.pprint(, indent=4)
-    # mong.clear_requests(["5982432257"])
-    # mong.create_collection()
-    # mong.update_request(request_id="hahah", set={"status": "kk", "msg": "just a test"})
-    # print(list(mong.find_requests_by_status("all_")))
-    # print(len(mong.find_requests_by_status("waiting")), "个kol")
-    # print(mong.find_request("5834040068"))
-    # for i in list(mong.coll.find()):
-    #     del i['_id']
-    #     if len(i['profile']) <= 3:
-    #         mong.clear_requests([i['kol_id']])
-    # pprint.pprint(mong.find_requests_by_status(["finished"]), indent=4)
-    # mong.clear_requests_by_status(["running", "waiting"])
-    # mongo = MongoSevice(my_db="chatbot_my", my_set="aiml_rules", id_col="rid")
-    mongo = MongoSevice(my_db="chatbot", my_set="weather", id_col="uid")
 
-    # mongo.create_collection()
-    # mongo.insert_request(doc={"rid": hash("明天去公园吗"),
-    #                           "q": "明天去公园吗",
-    #                           "a": "当然好啦"})
-    pprint.pprint(mongo.find_requests_by_status("all_"), indent=4)
-    print("ok")

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # version=3.6.4
-# @Date  : 2018/12/9
 # @Author  : fanzfeng
 
 import numpy as np

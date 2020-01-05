@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# version=3.6.4
-# @Date  : 2019/5/15
 # @Author  : fanzfeng
 
 import os
@@ -34,7 +32,7 @@ with open(file_stop_words, "r", encoding="utf-8") as fp:
     stops_list = [k.strip() for k in fp.readlines()][0:37] + ["'"]
 query2rid_file = os.path.join(nlp_path, "3w_bot.csv")
 
-log_file = "./chat.log"
+log_file = "log/chat.log"
 formatter = '[%(levelname)s] [%(asctime)s] [%(filename)s:%(lineno)d] [%(message)s]'
 logging.basicConfig(filename=log_file, level=logging.DEBUG, format=formatter)
 # FORMAT = '%(asctime)-15s %(levelname)s - %(message)s'

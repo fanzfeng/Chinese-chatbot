@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # version='3.5.2'
 # -*- coding: utf-8 -*-
 # @Author  : fanzfeng
@@ -8,7 +7,7 @@ import pymysql
 
 class MysqlSevice:
     def __init__(self, table_name):
-        self.ip = "101.200.61.56"
+        self.ip = "localhost"
         self.db = "za_chatbot"
         self.coll = table_name
         self.cols = ["question", "answer"]
@@ -57,9 +56,3 @@ class MysqlSevice:
             return [r for r in self.exe][0][0]
         except Exception as e:
             return str(e)
-
-
-# if __name__ == "__main__":
-#     mysql = MysqlSevice(table_name='spammer')
-#     print(mysql.clear())
-#     print(mysql.insert(["12", "34"]))

@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import sys
-sys.path.insert(0, "../")
+import os, sys
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
+print(botPath)
+sys.path.append(botPath)
 
 from aiml.constants import *
 from aiml.LangSupport import mergeChineseSpace

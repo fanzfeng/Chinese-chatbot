@@ -38,6 +38,7 @@ def md_5(x):
     m2.update(x.encode())
     return m2.hexdigest()
 
+
 def safe_str(obj):
     try: return str(obj)
     except UnicodeEncodeError:

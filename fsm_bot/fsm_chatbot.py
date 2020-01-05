@@ -1,16 +1,18 @@
-#!/usr/bin/env python
-# version=3.6.4
 # -*- coding: utf-8 -*-
 # @Date  : 09/08/2018
 # @Author  : fanzfeng
 
 import pandas as pd
 import elasticsearch
+import os, sys
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
+print(botPath)
+sys.path.append(botPath)
 
 ip = ["10.1.8.105", "101.200.61.56", "39.108.171.231"][-1]
 es = elasticsearch.Elasticsearch([ip], http_auth=('elastic', 'changeme'))
-state = pd.read_csv("./data/explan", sep="\t", encoding="utf-8", header=None)
-transfer = pd.read_csv("./data/transfer", sep="\t", encoding="utf-8", header=None)
+state = pd.read_csv(os.path.join(botPath, "data/explan"), sep="\t", encoding="utf-8", header=None)
+transfer = pd.read_csv(os.path.join(botPath, "data/transfer"), sep="\t", encoding="utf-8", header=None)
 transfer[1] = transfer[1].apply(lambda xs: xs.split('，'))
 state_dict = state.set_index(0)[1].to_dict()
 state_origin = "is_single"
@@ -55,8 +57,7 @@ class FSM(object):
             # print("remain:", self._sessions[sessionID])
             return self.final_response+state_dict[self._sessions[sessionID]]
         else:
-            res = es.search(index="fanzfeng", doc_type="fsm_za",
-                            body={"query": {"match": {"question": input_}}})
+            res = es.search(index="fanzfeng", doc_type="fsm_za", body={"query": {"match": {"question": input_}}})
             res_cnt = len(res["hits"]["hits"])
             if res_cnt > 0:
                 return res["hits"]["hits"][0]["_source"]["answer"]+self.nota_response+state_dict[self._sessions[sessionID]]

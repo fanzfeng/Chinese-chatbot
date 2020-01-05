@@ -7,6 +7,12 @@ import time
 import jieba
 from collections import Counter
 import pandas as pd
+
+import os, sys
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
+print(botPath)
+sys.path.append(botPath)
+
 from bot_config import logging
 
 
@@ -106,4 +112,3 @@ if __name__ == "__main__":
             print("再见")
             break
         print(se.query_search(user_input))
-

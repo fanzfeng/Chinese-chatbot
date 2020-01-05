@@ -1,6 +1,0 @@
-is_single	不是的，结婚，不是	end_no
-is_single	是的，没有，嗯，对，是	can_intro
-can_intro	没想法，没这个打算，不要，不用	end_no
-can_intro	没意见，可以，同意，好，嗯	end_yes
-end_yes	-	end
-end_no	-	end

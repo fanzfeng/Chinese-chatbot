@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import os
 import time
 import jieba
 import numpy as np
 import tensorflow as tf
 
-import sys, codecs
-sys.path.insert(0, "../")
+import os, sys
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
+print(botPath)
+sys.path.append(botPath)
+
 try:
     sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 except:
@@ -15,7 +17,7 @@ except:
 from bot_config import logging
 from s2s_bot.model import Seq2Seq
 from s2s_bot.config import *
-from utils_fanzfeng.tf_utils import load_vocab, seq2seq_get_batch
+from utils.tf_utils import load_vocab, seq2seq_get_batch
 
 
 def check_restore_parameters(sess, saver, model_path):
