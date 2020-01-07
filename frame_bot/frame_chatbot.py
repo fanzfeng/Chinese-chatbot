@@ -3,22 +3,45 @@
 # @Author  : fanzfeng
 
 import time
-import os, sys, codecs
-botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
-print(botPath)
-sys.path.append(botPath)
+import pyltp
+import platform
+import sys, codecs
+from bot_config import logging
 
+sys.path.insert(0, "../")
 try:
     sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 except:
     pass
 
-from utils.weather import WeatherQA
-from utils.mongo_service import MongoSevice
-from bot_config import logging
+from utils_fanzfeng.weather import WeatherQA
+from utils_fanzfeng.mongo_service import MongoSevice
 
+
+if platform.system() == 'Darwin':
+    config_dir = '/users/fanzfeng/Data/'
+elif platform.system() == 'Linux':
+    config_dir = '/home/fanzfeng/nlp_config/'
+segmentor = pyltp.Segmentor()
+segmentor.load(config_dir + "ltp_data_v3.4.0/cws.model")
+postagger = pyltp.Postagger()
+postagger.load(config_dir + "ltp_data_v3.4.0/pos.model")
+recognizer = pyltp.NamedEntityRecognizer()
+recognizer.load(config_dir + "ltp_data_v3.4.0/ner.model")
 
 weather = WeatherQA()
+
+
+def ner(text):
+    words = list(segmentor.segment(text))
+    postags = list(postagger.postag(words))
+    netags = list(recognizer.recognize(words, postags))
+    jr = {}
+    for h in ["B", "I", "E", "S"]:
+        for s in ["Nh", "Ns", "Ni"]:
+            if h + "-" + s in netags:
+                jr[s] = words[netags.index(h + "-" + s)]
+    return jr
 
 
 def action_query(query_info):
@@ -62,9 +85,9 @@ class FRAME(object):
             request_info = self.res_default
         logging.debug("Session start json: {}".format(request_info))
         if len(input_) > 0:
-            ad_word = weather.loc_index(input_)
-            if ad_word is not None:
-                request_info["loc_text"] = ad_word
+            ad_dict = ner(input_)
+            if 'Ns' in ad_dict or 'Ni' in ad_dict:
+                request_info["loc_text"] = (ad_dict['Ns'] if 'Ns' in ad_dict else ad_dict['Ni'])
                 self.mong.update_request(sessionID,
                                          set={"loc_text": request_info["loc_text"], "update_time": time.time()})
             date_info = weather.date_index(input_)
@@ -74,7 +97,7 @@ class FRAME(object):
             if len(request_info["loc_text"]) < len(self.default_city) > 0:
                 request_info["loc_text"] = self.default_city
                 self.mong.update_request(sessionID, set={"date_ix": date_info, "update_time": time.time()})
-        # logging.debug("Session end json: {}".format(request_info))
+        logging.debug("Session end json: {}".format(request_info))
         return action_query(request_info)
 
 

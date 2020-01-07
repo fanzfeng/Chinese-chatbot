@@ -7,12 +7,6 @@ import time
 import jieba
 from collections import Counter
 import pandas as pd
-
-import os, sys
-botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
-print(botPath)
-sys.path.append(botPath)
-
 from bot_config import logging
 
 
@@ -105,10 +99,15 @@ if __name__ == "__main__":
     se = SearchEngine(query2rid_file=query2rid_file, rid2res_file=None,
                       file_stop_dict=base_path+"stop_words.txt")
     se.build_index()
-    se.query_search("我今天心情很糟")
+    # se.query_search("我今天心情很糟")
     while True:
         user_input = input("> ").strip().replace(" ", "")
         if user_input in ("bye", "quit"):
             print("再见")
             break
-        print(se.query_search(user_input))
+        rr = se.query_search(user_input)
+        if lenn(rr) > 0 and rr[0]["score"] > 0.4
+            print(rr[0]["answer"])
+        else:
+            print("没听懂, 请重新组织你的语言")
+
