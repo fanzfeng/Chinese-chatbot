@@ -1,5 +1,98 @@
 # 一个基于微信公众号的中文聊天机器人
-## 人格
-## 讲笑话
-## 查找天气--多轮
-## 闲聊
+1. 基于词典检索的人格模块
+  - 分词+倒排索引
+  - 相似问题文本检索（Q-Q检索）
+2. 基于规则的笑话模块
+3. 基于填槽的天气查询模块
+   - 对话管理：槽位填充+if-else
+   - 文本理解：jieba ner+规则
+   - 天气查询：高德API
+4. 闲聊模块
+   - 图灵接口
+5. 其他
+
+# 各种各样的文本对话机器人
+1. 基于标记语言
+2. 基于NLP生成模型（应用：闲聊/创意文本生成）
+3. 基于词典检索的问答机器人（应用：客服问答）
+4. 基于填槽的任务式对话机器人（应用：业务办理）
+5. 基于规则/有限状态机的对话机器人（应用：问卷调查、营销初筛）
+
+# 快速上手
+1. 依赖安装
+  - mysql
+  - mongo
+  - 高德API
+  - 图灵API
+2. py包安装: pip3 install -r requirements.txt
+3. 运行final_bot.py
+4. 部署公众号后台
+  - token获取
+  - 服务端: wx_server.py
+
+
+# 项目结构
+```
+├── aiml_bot 基于aiml标记语言的对话机器人
+│   ├── aiml
+│   ├── app.py
+│   ├── auto-gen.aiml
+│   ├── getweather.py
+│   ├── learn.py
+│   ├── startup.xml
+│   ├── subbers.ini
+│   └── test.aiml
+├── app.sh
+├── bot_config.py
+├── char_bot 取名机器：给我一个姓氏，还你一堆姓名
+│   ├── __init__.py
+│   ├── char_gen.py
+│   └── model.py
+├── data
+│   ├── 3w_bot.csv
+│   ├── explan
+│   ├── joke
+│   ├── save 
+│   │   ├── chars_vocab.pkl
+│   │   ├── checkpoint
+│   │   ├── config.pkl
+│   │   ├── data.pkl
+│   │   ├── model.ckpt-85599.data-00000-of-00001
+│   │   ├── model.ckpt-85599.index
+│   │   └── model.ckpt-85599.meta
+│   ├── save.tar.gz
+│   ├── stop_words.txt
+│   ├── transfer
+│   └── zsk
+├── final_bot.py     模块融合
+├── frame_bot 天气助手
+│   ├── __init__.py
+│   └── frame_chatbot.py
+├── fsm_bot  基于规则/fsm的对话机器人
+│   ├── __init__.py
+│   └── fsm_chatbot.py
+├── log
+│   ├── chat.log
+│   └── nohup.out
+├── s2s_bot   闲聊机器人
+│   ├── __init__.py
+│   ├── config.py
+│   ├── min_bot.py
+│   └── model.py
+├── se_bot  基于词典检索的对话机器人
+│   ├── __init__.py
+│   └── qa_search.py
+├── utils
+│   ├── __init__.py
+│   ├── mongo_service.py
+│   ├── mysql_service.py
+│   ├── nlp_utils.py
+│   ├── tf_utils.py
+│   └── weather.py
+├── weixin 微信公众号后台
+│   ├── __init__.py
+│   ├── receive.py
+│   └── reply.py
+└── wx_server.py
+
+```

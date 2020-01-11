@@ -7,22 +7,25 @@ import logging
 
 
 class MongoSevice(object):
-    def __init__(self, server_id, my_db, my_set, id_col):
+    def __init__(self, my_db, my_set, id_col, server_id="localhost", status_col=None):
         self.ip = server_id
         self.client = MongoClient(host=self.ip, port=27017)
         self.set_name = my_set
         self.id_col = id_col
         self.db = self.client[my_db]
-        self.coll = self.db[my_set]
-        # self.valid_cache_status = ['WAITING_CACHE', 'WAITING', 'SPARK_RUNNING', 'SPARK_FINISH', 'FINISH']
-        self.job_status = ['waiting', 'running', 'failed', 'finished']
-        # self.finished_cache_statsus = ['FINISH']
+        self.coll = self.db[self.set_name]
+        self.create_collection()
 
-    def create_collection(self, set_sort=False, cols_config=["status"]):
+        if status_col:
+            # self.valid_cache_status = ['WAITING_CACHE', 'WAITING', 'SPARK_RUNNING', 'SPARK_FINISH', 'FINISH']
+            self.job_status = ['waiting', 'running', 'failed', 'finished']
+            # self.finished_cache_statsus = ['FINISH']
+
+    def create_collection(self, set_sort=False, sort_cols=None):
         if self.set_name not in self.db.collection_names():
             self.coll.create_index([(self.id_col, pymongo.ASCENDING)], unique=True)
             if set_sort:
-                for ce in cols_config:
+                for ce in sort_cols:
                     self.coll.create_index([(ce, pymongo.ASCENDING)])
             logging.info('create collection {}'.format(self.set_name))
         else:
@@ -110,5 +113,3 @@ class MongoSevice(object):
     #     waiting_cache_job = self.find_requests_by_status('WAITING_CACHE')
     #     spark_running_job = self.find_requests_by_status('SPARK_RUNNING')
     #     return status_stat, waiting_job, waiting_cache_job, spark_running_job
-
-

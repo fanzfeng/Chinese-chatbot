@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-# version=3.6.4
-# @Date  : 2019/5/15
 # @Author  : fanzfeng
 
 import os
 import re
-import platform
 import logging
 
-MODAL_CN = '阿啊呃欸哇呀也耶哟欤呕噢呦嘢吧呗啵啦唻了嘞哩咧咯啰喽吗嘛嚜么麽哪呢呐否呵哈兮噻哉呸'
-fmp_pat_not_modal = re.compile("|".join(list(MODAL_CN)))
-fmt_pat_not_cn = re.compile('[^一-龥]')
+weixin_token = "" # 公众号号后台token
+tuling_token = ""
 
 default_response = ["你说的我没懂哦，正在拼命学习中",
                     "这个我就不懂了，你可以问下邻居小明",
@@ -35,18 +31,18 @@ weather_keywords = ["天气", "气温", "下雪", "下雨", "雾霾", "有雨", 
 switch_rules = [".*?换.*?话题", ".*?话题.*?换"]
 emotions = ["[奸笑]", "[捂脸]", "[发抖]", "[嘿哈]", "[机智]"]
 
-
-
-if platform.system() != 'Darwin':
-    nlp_path = "/home/fanzfeng/nlp_config"
-else:
-    nlp_path = "/Users/fanzfeng/Data/for_application"
+botPath = os.path.split(os.path.realpath(__file__))[0]
+nlp_path = os.path.join(botPath, "data")
 file_stop_words = os.path.join(nlp_path, "stop_words.txt")
 with open(file_stop_words, "r", encoding="utf-8") as fp:
     stops_list = [k.strip() for k in fp.readlines()][0:37] + ["'"]
 query2rid_file = os.path.join(nlp_path, "3w_bot.csv")
 
-log_file = "chat/chat.log"
+MODAL_CN = '阿啊呃欸哇呀也耶哟欤呕噢呦嘢吧呗啵啦唻了嘞哩咧咯啰喽吗嘛嚜么麽哪呢呐否呵哈兮噻哉呸'
+fmp_pat_not_modal = re.compile("|".join(list(MODAL_CN)))
+fmt_pat_not_cn = re.compile('[^一-龥]')
+
+log_file = os.path.join(botPath, "log/chat.log")
 formatter = '[%(levelname)s] [%(asctime)s] [%(filename)s:%(lineno)d] [%(message)s]'
 logging.basicConfig(filename=log_file, level=logging.DEBUG, format=formatter)
 # FORMAT = '%(asctime)-15s %(levelname)s - %(message)s'·

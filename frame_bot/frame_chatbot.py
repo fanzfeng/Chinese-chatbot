@@ -1,47 +1,26 @@
 # -*- coding: utf-8 -*-
 # @Date  : 08/08/2018
 # @Author  : fanzfeng
+'''
+天气助手：多轮对话
+> 对话管理：槽位填充+if-else
+> 文本理解：ner+规则
+> 天气查询：高德API
+'''
 
 import time
-import pyltp
-import platform
-import sys, codecs
+import os, sys
+
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
+print(botPath)
+sys.path.append(botPath)
+
 from bot_config import logging
+from utils.weather import WeatherQA
+from utils.mongo_service import MongoSevice
 
-sys.path.insert(0, "../")
-try:
-    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
-except:
-    pass
-
-from utils_fanzfeng.weather import WeatherQA
-from utils_fanzfeng.mongo_service import MongoSevice
-
-
-if platform.system() == 'Darwin':
-    config_dir = '/users/fanzfeng/Data/'
-elif platform.system() == 'Linux':
-    config_dir = '/home/fanzfeng/nlp_config/'
-segmentor = pyltp.Segmentor()
-segmentor.load(config_dir + "ltp_data_v3.4.0/cws.model")
-postagger = pyltp.Postagger()
-postagger.load(config_dir + "ltp_data_v3.4.0/pos.model")
-recognizer = pyltp.NamedEntityRecognizer()
-recognizer.load(config_dir + "ltp_data_v3.4.0/ner.model")
 
 weather = WeatherQA()
-
-
-def ner(text):
-    words = list(segmentor.segment(text))
-    postags = list(postagger.postag(words))
-    netags = list(recognizer.recognize(words, postags))
-    jr = {}
-    for h in ["B", "I", "E", "S"]:
-        for s in ["Nh", "Ns", "Ni"]:
-            if h + "-" + s in netags:
-                jr[s] = words[netags.index(h + "-" + s)]
-    return jr
 
 
 def action_query(query_info):
@@ -85,9 +64,9 @@ class FRAME(object):
             request_info = self.res_default
         logging.debug("Session start json: {}".format(request_info))
         if len(input_) > 0:
-            ad_dict = ner(input_)
-            if 'Ns' in ad_dict or 'Ni' in ad_dict:
-                request_info["loc_text"] = (ad_dict['Ns'] if 'Ns' in ad_dict else ad_dict['Ni'])
+            ad_dict = weather.loc_index(input_)
+            if ad_dict:
+                request_info["loc_text"] = ad_dict
                 self.mong.update_request(sessionID,
                                          set={"loc_text": request_info["loc_text"], "update_time": time.time()})
             date_info = weather.date_index(input_)
@@ -109,4 +88,3 @@ if __name__ == "__main__":
             print("再见")
             break
         print(query.respond(user_input))
-

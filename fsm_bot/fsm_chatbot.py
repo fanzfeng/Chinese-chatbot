@@ -1,16 +1,20 @@
-#!/usr/bin/env python
-# version=3.6.4
 # -*- coding: utf-8 -*-
 # @Date  : 09/08/2018
 # @Author  : fanzfeng
+'''
+基于规则/有限状态机(fsm)的多轮对话:
+> 机器人主导，场景为机器人主动获取用户信息，比如调研
+> 组成部分包括状态、跳转条件(正则定义)
+> 状态跳转路径预先定义
+> 遇到终止状态，则对话结束
+'''
 
+import os
 import pandas as pd
-import elasticsearch
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
 
-ip = ["10.1.8.105", "101.200.61.56", "39.108.171.231"][-1]
-es = elasticsearch.Elasticsearch([ip], http_auth=('elastic', 'changeme'))
-state = pd.read_csv("./data/explan", sep="\t", encoding="utf-8", header=None)
-transfer = pd.read_csv("./data/transfer", sep="\t", encoding="utf-8", header=None)
+state = pd.read_csv(os.path.join(botPath, "data/explan"), sep="\t", encoding="utf-8", header=None)
+transfer = pd.read_csv(os.path.join(botPath, "data/transfer"), sep="\t", encoding="utf-8", header=None)
 transfer[1] = transfer[1].apply(lambda xs: xs.split('，'))
 state_dict = state.set_index(0)[1].to_dict()
 state_origin = "is_single"
@@ -55,13 +59,7 @@ class FSM(object):
             # print("remain:", self._sessions[sessionID])
             return self.final_response+state_dict[self._sessions[sessionID]]
         else:
-            res = es.search(index="fanzfeng", doc_type="fsm_za",
-                            body={"query": {"match": {"question": input_}}})
-            res_cnt = len(res["hits"]["hits"])
-            if res_cnt > 0:
-                return res["hits"]["hits"][0]["_source"]["answer"]+self.nota_response+state_dict[self._sessions[sessionID]]
-            else:
-                return self.final_response+state_dict[self._sessions[sessionID]]
+            return self.final_response+state_dict[self._sessions[sessionID]]
 
 
 if __name__ == "__main__":

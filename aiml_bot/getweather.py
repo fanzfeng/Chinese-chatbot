@@ -18,12 +18,13 @@ def weather_bot(text):
     ad_text = wea.loc_index(text)
     date_set = wea.date_index(text)
     if ad_text:
-        if date_set is None:
-            print(wea.weather_query(ad_text, 0))
-        else:
-            print(wea.weather_query(ad_text, date_set))
+        pass
     else:
-        print("尴尬啦，没查到# #")
+        ad_text = "深圳"
+    if date_set is None:
+        print(wea.weather_query(ad_text, 0))
+    else:
+        print(wea.weather_query(ad_text, date_set))
 
 
 def main():

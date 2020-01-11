@@ -12,9 +12,6 @@ import aiml
 
 from getweather import weather_bot
 
-import elasticsearch
-# ip = "101.200.61.56"
-# es = elasticsearch.Elasticsearch([ip], http_auth=('elastic', 'changeme'))
 weather_keywords = ["天气", "下雨", "晴天", "阳光", "温度", "下雪"]
 
 k = aiml.Kernel()

@@ -1,22 +1,34 @@
-# version='3.5.2'
 # -*- coding: utf-8 -*-
 # @Author  : fanzfeng
 
 import pymysql
 
 
-class MysqlSevice:
-    def __init__(self, table_name):
-        self.ip = "localhost"
-        self.db = "za_chatbot"
+class MysqlSevice(object):
+    def __init__(self, table_name, server_ip="localhost", user="root", passwd="root", db_name="mysql",
+                 cols_name=["question", "answer"], col_types=["%s", "%s"]):
+        self.ip = server_ip
+        self.db = db_name
+
         self.coll = table_name
-        self.cols = ["question", "answer"]
-        self.dtypes = ["%s", "%s"]
-        self.client = pymysql.connect(host=self.ip, user='root', passwd='root', db=self.db, autocommit=True,
+        self.cols = cols_name
+        self.dtypes = col_types
+        assert len(cols_name) == len(self.dtypes)
+        self.nlen = len(cols_name)
+        self.client = pymysql.connect(host=self.ip, user=user, passwd=passwd, db=self.db, autocommit=True,
                                       use_unicode=True, charset="utf8")
         self.exe = self.client.cursor()
+        self.create_table()
 
-    # @staticmethod
+    def create_table(self):
+        if isinstance(self.scan(0), list):
+            pass
+        else:
+            format_cols = ["{} {}".format(self.cols[j], "int" if self.dtypes[j] == "%d" else "varchar(100)")
+                           for j in range(self.nlen)]
+            new_sql = "create table {}({})".format(self.coll, ", ".join(format_cols))
+            self.exe.execute(new_sql)
+
     def insert(self, data_list):
         try:
             self.exe.executemany("insert into {} ({}) values ({})".format(self.coll, ",".join(self.cols),
@@ -56,3 +68,7 @@ class MysqlSevice:
             return [r for r in self.exe][0][0]
         except Exception as e:
             return str(e)
+
+
+if __name__ == "__main__":
+    mysql = MysqlSevice(table_name="just_test")

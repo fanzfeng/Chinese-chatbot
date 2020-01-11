@@ -8,7 +8,7 @@ sys.path.append(botPath)
 from aiml.constants import *
 from aiml.LangSupport import mergeChineseSpace
 
-from utils_fanzfeng.mongo_service import MongoSevice
+from utils.mongo_service import MongoSevice
 
 template = """<?xml version="1.0" encoding="UTF-8"?>
 <aiml version="1.0">
@@ -25,7 +25,7 @@ category_template = """
 <template>{answer}</template>
 </category>
 """
-mongo = MongoSevice(my_db="chatbot_my", my_set="aiml_rules", id_col="rid")
+mongo = MongoSevice(server_id="localhost", my_db="chatbot_my", my_set="aiml_rules", id_col="rid")
 # mongo.insert_request(doc={"rid": hash("明天去公园吗"),
 #                           "q": "明天去公园吗",
 #                           "a": "当然好啦"})

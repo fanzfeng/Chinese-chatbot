@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
 # version=3.6.4
-# @Date  : 2019/1/2
 # @Author  : fanzfeng
+'''
+基于词典检索的人格模块：
+1. 预先定义问答库
+2. 使用时Q-Q问题检索，匹配回答
+3. 命中库中相似问题，每次都有固定回答（统一性）
+'''
 
+import os, sys
 import time
 import jieba
 from collections import Counter
 import pandas as pd
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-1])
+print(botPath)
+sys.path.append(botPath)
+
 from bot_config import logging
 
 
@@ -106,7 +116,7 @@ if __name__ == "__main__":
             print("再见")
             break
         rr = se.query_search(user_input)
-        if lenn(rr) > 0 and rr[0]["score"] > 0.4
+        if len(rr) > 0 and rr[0]["score"] > 0.4:
             print(rr[0]["answer"])
         else:
             print("没听懂, 请重新组织你的语言")

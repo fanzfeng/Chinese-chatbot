@@ -5,10 +5,8 @@ from __future__ import print_function
 
 import copy
 import glob
-import os
 import random
 import string
-import sys
 import time
 import datetime
 import threading
@@ -29,13 +27,16 @@ from .PatternMgr import PatternMgr
 from .WordSub import WordSub
 from .LangSupport import splitChinese, mergeChineseSpace
 
+import os, sys
+botPath = "/".join(os.path.split(os.path.realpath(__file__))[0].split('/')[:-2])
+print(botPath)
+sys.path.append(botPath)
 if not PY3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-from utils_fanzfeng.mongo_service import MongoSevice
-
-db = MongoSevice(my_db="chatbot_my", my_set="users_profile", id_col="sid")
+from utils.mongo_service import MongoSevice
+db = MongoSevice(server_id="localhost", my_db="chatbot_my", my_set="users_profile", id_col="sid")
 
 
 def msg_encoder(encoding=None):

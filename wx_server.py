@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# @Author  : fanzfeng
 
 import sys, codecs
 import web
@@ -29,7 +30,7 @@ class Handle(object):
             timestamp = data.timestamp
             nonce = data.nonce
             echostr = data.echostr
-            token = "fanzfengsdfdf345dfasdfsadfapp"
+            token = weixin_token
             list = [token, timestamp, nonce]
             list.sort()
             sha1 = hashlib.sha1()

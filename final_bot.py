@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 # version=3.6.4
-# @Date  : 2019/1/19
 # @Author  : fanzfeng
+'''
+对话机器人包含模块
+- 天气助手
+- 取名机器
+- 讲笑话
+- 人格模块
+- 闲聊（使用图灵接口）
+'''
 
 import time
 import jieba
@@ -10,7 +17,7 @@ import datetime
 import requests
 import json
 
-from utils_fanzfeng.mysql_service import MysqlSevice
+from utils.mysql_service import MysqlSevice
 from bot_config import *
 
 # from s2s_bot.min_bot import ChatBot
@@ -21,15 +28,14 @@ from char_bot.char_gen import GenName
 t0 = time.time()
 logging.info("Load our bots...")
 cn_text_cut = jieba.cut
-mysql = MysqlSevice()
+mysql = MysqlSevice(table_name="bot_data")
 
-personality = SearchEngine(query2rid_file=query2rid_file,
-                           rid2res_file=None,
-                           file_stop_dict=file_stop_words,
-                           words_cut_func=cn_text_cut)
+personality = SearchEngine(query2rid_file=query2rid_file, rid2res_file=None,
+                           file_stop_dict=file_stop_words, words_cut_func=cn_text_cut)
 personality.build_index()
 weather_query = FRAME()
 bot_name = GenName()
+
 # chat_query = ChatBot(data_path="/home/fanzfeng/backup/processed",
 #                      model_path="/home/fanzfeng/backup/s2s_lr0.5_ft256",
 #                      words_cut_func=cn_text_cut)
@@ -58,8 +64,8 @@ def api_chat(user_text="附近的酒店"):
                        "selfInfo": {"location": {"city": "北京"}}
                        },
         "userInfo": {
-            "apiKey": "a391ecb267d34c95b58c6487e3a549a0",
-            "userId": "a391ecb267d34c95b58c6487e3a549a0"
+            "apiKey": tuling_token,
+            "userId": tuling_token
         }
     }
     res = requests.post(url, data=json.dumps(js))
@@ -127,17 +133,6 @@ def one_bot(input_str, uid="_global", min_score=0.7):
                 reply_text = "."+random.choice(default_response)
             else:
                 reply_cate = "chat"
-
-        # res_text = chat_query.s2s_bot(input_text)
-        # res_text_clean = clean_input(res_text)
-        # if len(res_text_clean) <= 1:
-        #    return random.choice(default_response)
-        # text_unq = text_unique(res_text_clean)
-        # if len(text_unq) <= 1:
-        #    return random.choice(default_response)
-        # else:
-        #    return None
-
     mysql.insert([[uid, date_int, reply_cate, input_str, reply_text, dt]])
     return reply_text
 
