@@ -1,0 +1,7 @@
+__pycache__
+*/__pycache__
+test
+.idea
+log/*
+.DS_Store
+*/.DS_Store
