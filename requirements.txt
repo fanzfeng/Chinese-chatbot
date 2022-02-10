@@ -3,7 +3,7 @@ requests==2.22.0
 six==1.12.0
 pyltp==0.2.1
 pandas==0.22.0
-tensorflow==1.11.0
+tensorflow==2.5.3
 jieba==0.39
 web.py==0.40.dev1
 numpy==1.17.4
