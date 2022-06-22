@@ -6,6 +6,6 @@ pandas==0.22.0
 tensorflow==1.11.0
 jieba==0.39
 web.py==0.40.dev1
-numpy==1.17.4
+numpy==1.22.0
 pymongo==3.8.0
 web==0.6.0
